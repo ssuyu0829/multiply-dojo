@@ -1,0 +1,11 @@
+{
+  "name": "multiply-dojo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "九九特訓場 — 每日九九乘法與直式乘法特訓 PWA",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node test/run.mjs"
+  }
+}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="九九特訓場">
+<title>九九特訓場</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="sync-dot" id="syncDot" title="同步狀態"></div>
+<div class="burst" id="burst"></div>
+<div class="toast" id="toast"></div>
+
+<div id="app">
+
+  <!-- ══════════════ 第一次啟動：取名字＋選頭像 ══════════════ -->
+  <section class="screen" id="s-setup">
+    <div style="text-align:center;padding:30px 0 22px">
+      <div class="logo">99 DOJO<small>九 九 特 訓 場</small></div>
+    </div>
+    <h2 class="sec">選一個你的頭像</h2>
+    <div class="pickgrid" id="avatarPick"></div>
+    <h2 class="sec">你的名字</h2>
+    <input class="name" id="nickInput" maxlength="8" placeholder="輸入暱稱" autocomplete="off">
+    <div class="spacer" style="min-height:26px"></div>
+    <button class="btn block lg" id="setupGo">開始特訓 →</button>
+    <p class="hint" style="margin-top:14px">每天 5 分鐘，把整張九九乘法表點成<b>金色</b>。</p>
+  </section>
+
+  <!-- ══════════════ 首頁 ══════════════ -->
+  <section class="screen" id="s-home">
+    <div class="topbar">
+      <div class="avatar" id="homeAvatar">🐯</div>
+      <div class="who">
+        <b id="homeNick">—</b>
+        <span id="homeMenu">—</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="streak" id="homeStreak">
+        <span class="flame">🔥</span><span class="n">0</span><span class="u">天</span>
+      </div>
+      <button class="iconbtn" id="muteBtn" title="音效">🔊</button>
+    </div>
+
+    <h2 class="sec" id="questHeading">今日任務</h2>
+    <div id="questList"></div>
+
+    <button class="btn block lg" id="startBtn" style="margin-top:6px">開始今日任務</button>
+
+    <h2 class="sec">乘法表點亮圖</h2>
+    <div class="panel">
+      <div class="grid-wrap"><div class="mgrid" id="mgrid"></div></div>
+      <div class="legend">
+        <span><i style="background:#1b2942;border:1px solid #24354f"></i>還沒練</span>
+        <span><i style="background:color-mix(in srgb,var(--cyan) 22%,#1b2942)"></i>學習中</span>
+        <span><i style="background:color-mix(in srgb,var(--cyan) 55%,#1b2942)"></i>熟練</span>
+        <span><i style="background:linear-gradient(150deg,var(--gold),#ff8a00)"></i>自動化</span>
+      </div>
+      <p class="hint" id="gridNote" style="margin-top:12px"></p>
+    </div>
+
+    <h2 class="sec">紀錄</h2>
+    <div class="stats">
+      <div class="stat"><b id="pbSprint">0</b><span>閃電最佳</span></div>
+      <div class="stat"><b id="pbPerfect">0</b><span>最長連對</span></div>
+      <div class="stat"><b id="starCount">0</b><span>⭐ 星星</span></div>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn ghost" id="rankBtn" style="flex:1">🏆 姐妹週榜</button>
+      <button class="btn ghost" id="freeBtn" style="flex:1">⚡ 自由練習</button>
+    </div>
+    <div style="height:20px"></div>
+  </section>
+
+  <!-- ══════════════ 遊玩 ══════════════ -->
+  <section class="screen" id="s-play">
+    <div class="hud">
+      <button class="quit" id="quitBtn">✕</button>
+      <span class="title" id="playTitle">—</span>
+      <div class="timer" id="playTimer"><i style="width:100%"></i></div>
+      <div class="score-chip num" id="playScore">0</div>
+    </div>
+    <div class="stage" id="playStage">
+      <div class="combo" id="combo"></div>
+    </div>
+    <div id="playInput"></div>
+  </section>
+
+  <!-- ══════════════ 關卡結算 ══════════════ -->
+  <section class="screen" id="s-result">
+    <div class="result-hero">
+      <div class="big" id="resBig">0</div>
+      <div class="cap" id="resCap">— —</div>
+    </div>
+    <div class="stats" id="resStats"></div>
+    <div class="badges" id="resBadges"></div>
+    <div class="spacer" style="min-height:24px"></div>
+    <button class="btn block lg" id="resNext">下一關 →</button>
+    <div style="height:14px"></div>
+  </section>
+
+  <!-- ══════════════ 一日完成 ══════════════ -->
+  <section class="screen" id="s-daydone">
+    <div class="result-hero">
+      <div class="big" style="font-size:clamp(40px,13vw,60px)">CLEAR!</div>
+      <div class="cap">今 日 任 務 完 成</div>
+    </div>
+    <div class="panel" style="text-align:center">
+      <div class="streak" style="display:inline-flex;transform:scale(1.25);margin:10px 0 16px">
+        <span class="flame">🔥</span><span class="n" id="dayStreak">0</span><span class="u">天</span>
+      </div>
+      <p class="hint" id="dayMsg"></p>
+    </div>
+    <h2 class="sec">今天點亮的格子</h2>
+    <div class="panel">
+      <div class="grid-wrap"><div class="mgrid" id="dayGrid"></div></div>
+    </div>
+    <div class="badges" id="dayBadges"></div>
+    <div class="spacer" style="min-height:20px"></div>
+    <button class="btn block lg" id="dayHome">回主畫面</button>
+    <div style="height:14px"></div>
+  </section>
+
+  <!-- ══════════════ 週榜 ══════════════ -->
+  <section class="screen" id="s-rank">
+    <div class="topbar">
+      <button class="iconbtn" id="rankBack">←</button>
+      <div class="who"><b>姐妹週榜</b><span>比的是「這週進步多少」</span></div>
+    </div>
+    <div id="rankList" style="margin-top:16px"></div>
+    <div class="panel" style="margin-top:16px">
+      <p class="hint" style="text-align:left">
+        進步分 ＝ 反應變快 ×40 ＋ 正確率提升 ×40 ＋ 練習天數 ×20<br>
+        <b>比的不是誰算得快，是誰進步多。</b>
+      </p>
+    </div>
+    <div class="spacer"></div>
+  </section>
+
+  <!-- ══════════════ 自由練習選單 ══════════════ -->
+  <section class="screen" id="s-free">
+    <div class="topbar">
+      <button class="iconbtn" id="freeBack">←</button>
+      <div class="who"><b>自由練習</b><span>不算今日任務，純好玩</span></div>
+    </div>
+    <div id="freeList" style="margin-top:16px"></div>
+    <div class="spacer"></div>
+  </section>
+
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
