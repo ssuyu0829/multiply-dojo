@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 直式題產生器（600 題唯一解驗證）
+        run: node test/column.mjs
+
+      - name: 錯誤分類
+        run: node test/classify.mjs
+
+      - name: 自適應出題引擎
+        run: node test/engine.mjs

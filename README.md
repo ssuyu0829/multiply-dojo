@@ -1,5 +1,7 @@
 # 九九特訓場（Multiply Dojo）
 
+[![CI](https://github.com/ssuyu0829/multiply-dojo/actions/workflows/ci.yml/badge.svg)](https://github.com/ssuyu0829/multiply-dojo/actions/workflows/ci.yml)
+
 每天 5–8 分鐘的九九乘法 × 直式乘法練習 PWA。
 給兩個國小中年級的家教學生實際每天使用：**S 生**（speed 菜單）與 **A 生**（accuracy 菜單）。
 
