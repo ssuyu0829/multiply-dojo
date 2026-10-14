@@ -14,7 +14,7 @@
 
 - **零依賴**：純 ES modules，沒有 npm 套件、沒有 build step
 - **離線可玩**：作答先進本機佇列，回線自動補傳
-- **老師端**儀表板與資料庫 schema 放在本機，刻意不放進這個 repo
+- **老師端**儀表板放在本機，刻意不放進這個 repo；資料庫 schema 與三個 RPC 見 `docs/schema.sql`
 
 ## 開發方式
 
@@ -28,7 +28,7 @@
    保證挖空後只有一組解；測試覆蓋 600 題。
 3. **錯誤分類**：直式答錯時自動判斷是進位、對位還是九九本身出錯，老師端才看得出「錯在哪一步」。
 4. **離線優先的同步**（`js/sync.js`）：本機是真相來源，作答進佇列、批次 POST 到 RPC，成功才清佇列。
-5. **anon key 公開前提下的安全模型**：資料表開 RLS 但零 policy，前端只能呼叫三個驗 token 的 `SECURITY DEFINER` 函式（見下方〈安全模型〉）。
+5. **anon key 公開前提下的安全模型**：資料表開 RLS 但零 policy，前端只能呼叫三個驗 token 的 `SECURITY DEFINER` 函式（見下方〈安全模型〉與 `docs/schema.sql`）。
 
 ## 畫面
 
@@ -97,6 +97,7 @@ js/
 sw.js                 Service Worker（離線）
 manifest.json         PWA
 test/                 Node 測試（run.mjs 是 npm test 的進入點）+ 瀏覽器冒煙測試
+docs/schema.sql       Supabase 資料表、RLS 與 push / pull / leaderboard 三個 RPC
 docs/screenshots/     README 用的畫面截圖
 ```
 
@@ -148,7 +149,8 @@ GitHub Pages 免費版要 public repo，所以 anon key 會公開。因此：
 - 前端只能呼叫三個 `SECURITY DEFINER` 函式：`push` / `pull` / `leaderboard`，且都要帶對 token
 - 老師端 dashboard 用 `service_role` 金鑰，**只放本機**，不進 repo
 
-schema 與老師端不在這個 repo。
+完整 DDL（三張表、索引、RLS、三個函式）在 [`docs/schema.sql`](docs/schema.sql)，自生產環境倒出。
+老師端 dashboard 與它依賴的彙總 view 不在這個 repo。
 
 ---
 
