@@ -11,9 +11,9 @@
 --    3. 前端唯一能做的是呼叫 push / pull / leaderboard 三個
 --       SECURITY DEFINER 函式，而且每一個都要帶對學生的 uuid token。
 --
---  老師端 dashboard（用 service_role key，只放本機）與它依賴的三個彙總
---  view（column_errors / daily_summary / fact_mastery）不在這個 repo，
---  檔尾只列出欄位供參考。
+--  老師端 dashboard（用 service_role key，只放本機）不在這個 repo；
+--  它依賴的三個彙總 view（fact_mastery / daily_summary / column_errors）
+--  收錄在檔尾。
 --
 --  學生真實姓名只存在 students.name，不出現在前端程式碼。
 -- ============================================================
@@ -232,12 +232,51 @@ grant execute on function public.leaderboard(uuid)               to anon;
 
 
 -- ------------------------------------------------------------
---  老師端彙總 view（定義不收錄，僅列欄位）
---  只有 service_role 會讀，anon 沒有權限。
+--  老師端彙總 view
+--  只有 service_role（老師端 dashboard）會讀；anon 沒有權限。
+--  全部建立在 attempts 之上，不另外存資料。
 -- ------------------------------------------------------------
---  fact_mastery  (name, student_id, a, b, tries, hits, acc_pct, avg_ms, last_seen)
---      每個九九乘法事實的熟練度 → 老師端熱力圖、最弱題目
---  daily_summary (name, student_id, day, attempts, correct, acc_pct, avg_ms, modes)
---      每日練習量、正確率、平均反應 → 進步曲線
---  column_errors (name, student_id, qtype, error_tag, n)
---      直式題錯誤分類統計（carry / align / fact）→ 看「錯在哪一步」
+
+-- 每個九九乘法事實的熟練度 → 老師端熱力圖、最弱題目
+-- 只算 qtype = 'ab'（a × b = ?）的純回想題，逆推／找錯誤／直式不混進來。
+create view fact_mastery as
+ SELECT s.name,
+    a.student_id,
+    a.a,
+    a.b,
+    count(*) AS tries,
+    count(*) FILTER (WHERE a.is_correct) AS hits,
+    round(100.0 * count(*) FILTER (WHERE a.is_correct)::numeric / count(*)::numeric)::integer AS acc_pct,
+    round(avg(a.response_ms) FILTER (WHERE a.is_correct AND a.response_ms > 0))::integer AS avg_ms,
+    max(a.answered_at) AS last_seen
+   FROM attempts a
+     JOIN students s ON s.id = a.student_id
+  WHERE a.qtype = 'ab'::text AND a.a IS NOT NULL
+  GROUP BY s.name, a.student_id, a.a, a.b;
+
+-- 每日練習量、正確率、平均反應、玩了幾種關卡 → 進步曲線
+create view daily_summary as
+ SELECT s.name,
+    a.student_id,
+    a.answered_at::date AS day,
+    count(*) AS attempts,
+    count(*) FILTER (WHERE a.is_correct) AS correct,
+    round(100.0 * count(*) FILTER (WHERE a.is_correct)::numeric / count(*)::numeric)::integer AS acc_pct,
+    round(avg(a.response_ms) FILTER (WHERE a.is_correct AND a.response_ms > 0))::integer AS avg_ms,
+    count(DISTINCT a.mode) AS modes
+   FROM attempts a
+     JOIN students s ON s.id = a.student_id
+  GROUP BY s.name, a.student_id, (a.answered_at::date);
+
+-- 直式題錯誤分類統計（carry / align / fact）→ 看「錯在哪一步」
+-- qtype 是 'column1' / 'column2' / 'column3'（難度），所以用 like 'column%'。
+create view column_errors as
+ SELECT s.name,
+    a.student_id,
+    a.qtype,
+    a.error_tag,
+    count(*) AS n
+   FROM attempts a
+     JOIN students s ON s.id = a.student_id
+  WHERE a.qtype ~~ 'column%'::text AND NOT a.is_correct
+  GROUP BY s.name, a.student_id, a.qtype, a.error_tag;

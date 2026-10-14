@@ -97,7 +97,7 @@ js/
 sw.js                 Service Worker（離線）
 manifest.json         PWA
 test/                 Node 測試（run.mjs 是 npm test 的進入點）+ 瀏覽器冒煙測試
-docs/schema.sql       Supabase 資料表、RLS 與 push / pull / leaderboard 三個 RPC
+docs/schema.sql       Supabase 資料表、RLS、三個 RPC 與老師端彙總 view
 docs/screenshots/     README 用的畫面截圖
 ```
 
@@ -149,8 +149,8 @@ GitHub Pages 免費版要 public repo，所以 anon key 會公開。因此：
 - 前端只能呼叫三個 `SECURITY DEFINER` 函式：`push` / `pull` / `leaderboard`，且都要帶對 token
 - 老師端 dashboard 用 `service_role` 金鑰，**只放本機**，不進 repo
 
-完整 DDL（三張表、索引、RLS、三個函式）在 [`docs/schema.sql`](docs/schema.sql)，自生產環境倒出。
-老師端 dashboard 與它依賴的彙總 view 不在這個 repo。
+完整 DDL（三張表、索引、RLS、三個函式、老師端三個彙總 view）在 [`docs/schema.sql`](docs/schema.sql)，自生產環境倒出。
+老師端 dashboard 本身不在這個 repo。
 
 ---
 
