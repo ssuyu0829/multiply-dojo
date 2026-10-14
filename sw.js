@@ -4,7 +4,7 @@
    改版時把 VERSION 加一，舊快取會自動清掉。
    ============================================================ */
 
-const VERSION = 'dojo-v3';   // v3：關閉分階段解鎖，accuracy 菜單也開全 81 題
+const VERSION = 'dojo-v4';   // v4：apple-touch-icon 改用專用圖
 
 const SHELL = [
   './',
@@ -15,6 +15,7 @@ const SHELL = [
   'fonts/chakra-700.woff2',
   'icons/icon-192.png',
   'icons/icon-512.png',
+  'icons/apple-touch-icon.png',
   'js/main.js',
   'js/store.js',
   'js/engine.js',

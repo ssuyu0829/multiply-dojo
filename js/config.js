@@ -7,7 +7,8 @@
    ⚠ 這裡的 key 是「可以公開」的 publishable key，放進公開 repo 沒問題。
      真正的保護在資料庫：anon 對 students / sessions / attempts 三張表
      零權限（RLS 全開且無 policy），只能呼叫 push / pull / leaderboard
-     三個函式，而且每個都要帶對 uuid token。詳見 schema.sql。
+     三個函式，而且每個都要帶對 uuid token。
+     資料庫 schema 與老師端不在這個前端 repo 內，安全模型見 README〈安全模型〉。
      絕不可以把 service_role key 放進這個檔案。
    ============================================================ */
 
