@@ -15,11 +15,5 @@ jobs:
         with:
           node-version: "20"
 
-      - name: 直式題產生器（600 題唯一解驗證）
-        run: node test/column.mjs
-
-      - name: 錯誤分類
-        run: node test/classify.mjs
-
-      - name: 自適應出題引擎
-        run: node test/engine.mjs
+      - name: Node 測試（直式題唯一解、錯誤分類、自適應引擎）
+        run: npm test

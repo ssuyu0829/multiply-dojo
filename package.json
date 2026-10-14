@@ -4,8 +4,11 @@
   "private": true,
   "type": "module",
   "description": "九九特訓場 — 每日九九乘法與直式乘法特訓 PWA",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "python3 -m http.server 8080",
+    "start": "python3 -m http.server 8099",
     "test": "node test/run.mjs"
   }
 }
