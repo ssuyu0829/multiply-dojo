@@ -227,11 +227,20 @@ export function askNumber(ctx, {
       limitT = setTimeout(() => submit(true), limitMs);
     }
 
+    // 使用者按 ✕ 退出：abortable 會 reject，但這裡的計時器要自己收，
+    // 否則回首頁後 tickT 還在改 HUD 的時間條、limitT 還會觸發 submit。
+    const onAbort = () => {
+      done = true;
+      clearTimeout(lockT); clearTimeout(limitT); clearInterval(tickT);
+    };
+    ctx.signal?.addEventListener('abort', onAbort, { once: true });
+
     function submit(timeout) {
       if (done) return;
       if (!timeout && !typed.length) return;
       done = true;
       clearTimeout(lockT); clearTimeout(limitT); clearInterval(tickT);
+      ctx.signal?.removeEventListener('abort', onAbort);
       const ms = Math.round(performance.now() - t0);
       const given = timeout ? null : +typed;
       const ok = !timeout && given === answer;

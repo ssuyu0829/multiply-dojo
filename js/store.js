@@ -68,7 +68,7 @@ export const store = {
   save() {
     try { localStorage.setItem(KEY, JSON.stringify(this.s)); }
     catch (e) {
-      // 空間滿了 → 丟掉最舊的一半佇列再試一次
+      // 空間滿了 → 上傳佇列只保留最新 500 筆再試一次
       this.s.queueA = this.s.queueA.slice(-500);
       try { localStorage.setItem(KEY, JSON.stringify(this.s)); } catch (_) {}
     }

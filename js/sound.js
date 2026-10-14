@@ -54,7 +54,6 @@ const note = n => 440 * Math.pow(S, n);       // n = 相對 A4 的半音數
 
 export const sfx = {
   setMuted(m) { muted = m; },
-  isMuted() { return muted; },
   /** 使用者第一次互動時呼叫，解鎖 iOS 的音訊 */
   unlock() { const c = ac(); if (c && c.state === 'suspended') c.resume(); },
 
@@ -73,8 +72,6 @@ export const sfx = {
     tone(note(7 + step), 0.11, { type: 'square', vol: 0.10 });
     tone(note(11 + step), 0.13, { type: 'square', vol: 0.07, delay: 0.05 });
   },
-  tick()  { tone(note(-2), 0.035, { type: 'square', vol: 0.04 }); },
-  warn()  { tone(note(0), 0.09, { type: 'square', vol: 0.08 }); },
   start() {
     [0, 4, 7].forEach((n, i) => tone(note(n), 0.13, { delay: i * 0.07, vol: 0.13 }));
   },

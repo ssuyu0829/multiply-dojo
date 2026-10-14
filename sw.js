@@ -4,7 +4,7 @@
    改版時把 VERSION 加一，舊快取會自動清掉。
    ============================================================ */
 
-const VERSION = 'dojo-v4';   // v4：apple-touch-icon 改用專用圖
+const VERSION = 'dojo-v4';   // v4：apple-touch-icon 改用專用圖、新增 js/util.js
 
 const SHELL = [
   './',
@@ -24,6 +24,7 @@ const SHELL = [
   'js/column.js',
   'js/sync.js',
   'js/config.js',
+  'js/util.js',
   'js/modes/sprint60.js',
   'js/modes/perfect.js',
   'js/modes/bughunt.js',
@@ -72,7 +73,6 @@ self.addEventListener('fetch', e => {
       fetchAndCache(e.request),
       new Promise(r => setTimeout(() => r(null), 2500))
     ])
-      .then(res => res || caches.match(e.request))
       .then(res => res || caches.match(e.request))
       .then(res => res || fetch(e.request))
   );

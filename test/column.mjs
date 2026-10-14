@@ -40,12 +40,5 @@ for (const level of [1,2,3]) {
   }
 }
 
-// 錯誤分類抽樣：47×6 忘記進位 → 242（正解 282），十位那格填 4 應判 carry
-console.log('\n分類抽樣：');
-{
-  const p = generate(1);
-  console.log(`  ${p.mcand} × ${p.mplier} = ${p.mcand*p.mplier}，挖空 ${p.blanks.length} 格`);
-}
-
 console.log(`\n共 ${n} 題（L1:${counts[1]} L2:${counts[2]} L3:${counts[3]}），失敗 ${fail}，耗時 ${Date.now()-t0}ms`);
 process.exit(fail ? 1 : 0);

@@ -4,6 +4,7 @@
    ============================================================ */
 
 import { pool } from '../engine.js';
+import { shuffle } from '../util.js';
 import { askNumber, subCtx, Abort, el } from '../ui.js';
 import { sfx } from '../sound.js';
 
@@ -22,7 +23,7 @@ export async function run(ctx) {
 
   const { sub, release } = subCtx(ctx);
   const startedAt = Date.now();
-  const qs = pool(ctx.store.s).sort(() => Math.random() - 0.5);
+  const qs = shuffle(pool(ctx.store.s));
   let correct = 0, total = 0, msSum = 0, msN = 0, combo = 0, best = 0;
 
   try {

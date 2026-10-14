@@ -7,6 +7,7 @@
 import { pick, plausibleWrong } from '../engine.js';
 import { el, abortable, subCtx, Abort, sleep } from '../ui.js';
 import { sfx } from '../sound.js';
+import { shuffle } from '../util.js';
 
 export const meta = { id: 'bughunt', name: '找錯誤', desc: '揪出算錯的算式', icon: '🔍' };
 
@@ -24,7 +25,7 @@ function makeRound(store) {
     items.push({ a, b, right: a * b, bad: false });
   }
   // 隨機挑 nBad 個換成似是而非的錯誤答案
-  const idx = items.map((_, i) => i).sort(() => Math.random() - 0.5).slice(0, nBad);
+  const idx = shuffle(items.map((_, i) => i)).slice(0, nBad);
   for (const i of idx) {
     items[i].bad = true;
     items[i].shown = plausibleWrong(items[i].a, items[i].b);
@@ -69,6 +70,11 @@ function playRound(ctx, items) {
       if (left <= 0) { clearInterval(tick); }
     }, 100);
     timer = setTimeout(() => finish(true), ROUND_MS);
+    // 使用者按 ✕ 退出：把計時器收乾淨，不然回首頁後 finish() 還會跑並播音效
+    ctx.signal.addEventListener('abort', () => {
+      done = true;
+      clearTimeout(timer); clearInterval(tick);
+    }, { once: true });
 
     async function finish(timeout) {
       if (done) return;

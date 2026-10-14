@@ -9,6 +9,8 @@
      驗證過唯一解。沒有唯一解的挖法會被丟掉重生。
    ============================================================ */
 
+import { shuffle } from './util.js';
+
 const dig = n => String(n).split('').map(Number);
 
 /** 把數字靠右排進寬度 W 的欄位 */
@@ -111,14 +113,6 @@ function digitCells(P, kinds) {
   });
   return out;
 }
-
-const shuffle = arr => {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = (Math.random() * (i + 1)) | 0;
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
 
 /**
  * 產生一題直式謎題。

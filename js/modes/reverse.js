@@ -8,6 +8,7 @@
 import { pick } from '../engine.js';
 import { askNumber, el, abortable, subCtx, Abort, sleep } from '../ui.js';
 import { sfx } from '../sound.js';
+import { shuffle } from '../util.js';
 
 export const meta = { id: 'reverse', name: '逆推挑戰', desc: '倒過來想：什麼乘什麼？', icon: '🔄' };
 
@@ -34,7 +35,7 @@ function multiQuestion() {
     const [lo, hi] = i <= j ? [i, j] : [j, i];
     if (lo * hi !== prod) bad.add(`${lo}×${hi}`);
   }
-  const chips = [...good, ...bad].sort(() => Math.random() - 0.5);
+  const chips = shuffle([...good, ...bad]);
   return { prod, good, chips };
 }
 
