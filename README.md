@@ -1,6 +1,9 @@
 # 九九特訓場（Multiply Dojo）
 
 [![CI](https://github.com/ssuyu0829/multiply-dojo/actions/workflows/ci.yml/badge.svg)](https://github.com/ssuyu0829/multiply-dojo/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+**線上試玩：<https://ssuyu0829.github.io/multiply-dojo/?t=demo>**（`?t=demo` 是本機試玩存檔，不會上傳任何資料）
 
 每天 5–8 分鐘的九九乘法 × 直式乘法練習 PWA。
 給兩個國小中年級的家教學生實際每天使用：**S 生**（speed 菜單）與 **A 生**（accuracy 菜單）。
@@ -27,15 +30,27 @@
 4. **離線優先的同步**（`js/sync.js`）：本機是真相來源，作答進佇列、批次 POST 到 RPC，成功才清佇列。
 5. **anon key 公開前提下的安全模型**：資料表開 RLS 但零 policy，前端只能呼叫三個驗 token 的 `SECURITY DEFINER` 函式（見下方〈安全模型〉）。
 
+## 畫面
+
+<p align="center">
+  <img src="docs/screenshots/1-home.png"    width="150" alt="首頁：今日任務與 9×9 點亮圖">
+  <img src="docs/screenshots/2-sprint.png"  width="150" alt="閃電 60 秒：自製數字鍵盤與 combo">
+  <img src="docs/screenshots/3-bughunt.png" width="150" alt="找錯誤：揪出似是而非的錯誤算式">
+  <img src="docs/screenshots/4-column.png"  width="150" alt="直式謎題：填空推理與進位提示">
+  <img src="docs/screenshots/5-result.png"  width="150" alt="結算頁">
+</p>
+<p align="center"><sub>首頁點亮圖　·　閃電 60 秒　·　找錯誤　·　直式謎題（已按提示，橘色小字是進位）　·　結算</sub></p>
+
 ---
 
 ## 快速開始
 
 ```bash
-python3 -m http.server 8099
+npm start                # = python3 -m http.server 8099，沒有任何 npm 套件要裝
 # S 生菜單 → http://localhost:8099/?t=test&m=s
 # A 生菜單 → http://localhost:8099/?t=test2&m=a
 
+npm test                 # 依序跑下面三組（Node ≥ 20）
 node test/column.mjs     # 直式題：600 題唯一解 + 算式正確性
 node test/classify.mjs   # 錯誤分類（進位／對位／九九本身）
 node test/engine.mjs     # 自適應引擎、Leitner、streak、分階段解鎖
@@ -70,6 +85,7 @@ index.html            所有畫面（setup / home / play / result / daydone / ra
 css/style.css         設計系統：深藍夜色 × 街機霓虹
 js/
   config.js           ★ Supabase 金鑰、難度門檻、分階段解鎖表
+  util.js             不碰 DOM 的小工具（Fisher–Yates 洗牌），Node 測試也能 import
   store.js            localStorage 狀態（唯一真相來源）、Leitner 資料、streak、上傳佇列
   engine.js           自適應出題：抽題權重、熟練度判定、階段解鎖、似是而非的錯誤選項
   column.js           直式題產生器 + 唯一解驗證 + 錯誤分類
@@ -80,7 +96,8 @@ js/
   modes/              六個關卡，各自 export { meta, run(ctx) }
 sw.js                 Service Worker（離線）
 manifest.json         PWA
-test/                 Node 測試 + 瀏覽器冒煙測試
+test/                 Node 測試（run.mjs 是 npm test 的進入點）+ 瀏覽器冒煙測試
+docs/screenshots/     README 用的畫面截圖
 ```
 
 ---
@@ -174,19 +191,14 @@ schema 與老師端不在這個 repo。
 
 ## 部署
 
-```bash
-git init && git add -A && git commit -m "九九特訓場 v1"
-gh repo create multiply-dojo --public --source=. --push
-gh api -X POST repos/{owner}/multiply-dojo/pages -f build_type=legacy \
-   -F 'source[branch]=main' -F 'source[path]=/'
-```
-
-之後更新只要 `git push`，孩子下次開啟就是新版。
+GitHub Pages 直接從 `main` 分支根目錄發布，沒有 build step：
+`git push` 之後孩子下次開啟就是新版。
 改版時記得把 `sw.js` 的 `VERSION` 加一，舊快取會自動清掉。
 
 ---
 
 ## 授權
 
+程式碼採 [MIT License](LICENSE)。
 `fonts/` 內的 Bungee 與 Chakra Petch 採 SIL Open Font License 1.1，
 允許自行架設與再散布，詳見 `fonts/LICENSE.txt`。
